@@ -3,6 +3,11 @@ Rails.application.routes.draw do
   resources :foods
   get '/users', to: 'users#index'
   get '/users/:id', to: 'users#show'
+  get '/users', to: 'users#create'
+
+  post '/login', to: 'sessions#create'
+  delete '/logout', to: 'sessions#destroy'
+  get '/logged_in', to: 'sessions#is_logged_in?'
 
   get '/recipes', to: 'recipes#index'
   get '/recipes/:id', to: 'recipes#show'

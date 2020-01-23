@@ -1,17 +1,39 @@
 class UsersController < ApplicationController
     def index
         users = User.all
-        render json: users.to_json(user_serializer)
+        if users
+            render json: users.to_json(user_serializer)
+        else
+            render json: {
+                status: 500,
+                errors: ['no users found']
+            }
+        end
     end
 
     def show
         user = User.find_by(params[:id])
-        render json: user.to_json(user_serializer)
+        if user
+            render json: user.to_json(user_serializer)
+        else
+            render json: {
+                status: 500,
+                errors: ['user not found']
+            }
+        end
     end
 
     def create
         user = User.create(user_params)
-        render json: user.to_json(user_serializer)
+        if user.save
+            login!
+            render json: user.to_json(user_serializer)
+        else
+            render json: {
+                status: 500,
+                errors: user.errors.full_messages
+            }
+        end
     end
 
     def update
@@ -23,7 +45,7 @@ class UsersController < ApplicationController
     private
 
     def user_params
-        params.require(:user).permit(:name, :diet)
+        params.require(:user).permit(:name, :diet, :username, :email, :password, :password_confirmation)
     end
 
     def user_serializer
